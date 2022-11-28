@@ -5,6 +5,8 @@ projectfiles
 mbed-os
 BUILD
 
-.clangd
 compile_commands.json
+.clangd
 .cache
+DHT11
+DHT
