@@ -15,6 +15,7 @@ typedef enum {
     WAITING,
     INICIANDO,
     PRENDIDO,
+    TOWAITING,
 } state_t;
 
 //=====[Declaration and initialization of public global objects]===============
@@ -27,7 +28,8 @@ typedef enum {
 
 state_t estado;
 DHT sensor(PD_0, DHT11);
-DigitalOut rele(PG_3);
+//DigitalOut rele(PG_3);
+DigitalOut rele(LED1);
 DigitalIn boton(BUTTON1); 
 
 //=====[Declaration and initialization of private global variables]============
@@ -93,9 +95,14 @@ void maquina_de_estados_update(){
                 Tmax=max(temperaturaActual,Tmax);
                 Hmax=max(humedadActual,Hmax);
                 if (boton || temperaturaActual< Tmax-TEMP_OFF_THRESHOLD || humedadActual < Hmax- HUM_OFF_THRESHOLD || tiempoEncendido > TIEMPO_MAXIMO_ENCENDIDO){
-                    estado=WAITING;
+                    estado=TOWAITING;
                     rele = OFF;
                 break;
+            case TOWAITING:
+                wait_us(50);
+                if (boton ==0){
+                    estado=WAITING;
+                }
             
             }
         }
