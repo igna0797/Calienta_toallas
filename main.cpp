@@ -1,5 +1,5 @@
 #include "mbed.h"
-#include "Maquina de estados/maquina.h"
+#include "Maquina/maquina.h"
 
 // main() runs in its own thread in the OS
 // boton 
