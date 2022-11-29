@@ -28,8 +28,8 @@ typedef enum {
 
 state_t estado;
 DHT sensor(PD_0, DHT11);
-//DigitalOut rele(PG_3);
-DigitalOut rele(LED1);
+DigitalInOut rele(PG_3);
+DigitalOut led(LED1);
 DigitalIn boton(BUTTON1); 
 
 //=====[Declaration and initialization of private global variables]============
@@ -44,6 +44,8 @@ time_t tiempoActual;
 //=====[Implementations of public functions]===================================
 void maquina_de_estados_init(){
         estado=WAITING;
+        rele.mode(OpenDrain);
+        rele.input();
     }
 
 void maquina_de_estados_update(){
@@ -57,9 +59,11 @@ void maquina_de_estados_update(){
                 if (boton==1){
                     //estado = WAITING;
                 }
+                break;
             case WAITING:
                 starting=1;
-                rele=OFF; //por si acaso se llego aca sin que se apagara.
+                rele.input(); //por si acaso se llego aca sin que se apagara.
+                led=OFF;
                 sensor.readData();
                 if(sensor.ReadHumidity() > HUMIDITY_THRESHOLD || sensor.ReadTemperature(CELCIUS) > TEMPERATURE_THRESHOLD || boton==1 ){
                     estado=INICIANDO;
@@ -81,7 +85,9 @@ void maquina_de_estados_update(){
                     break;
                 }
                 if (boton == 0) {
-                    rele=ON;
+                    rele.output();
+                    rele = LOW;
+                    led=ON;
                     estado=PRENDIDO;
                 }
                 break;
@@ -96,7 +102,8 @@ void maquina_de_estados_update(){
                 Hmax=max(humedadActual,Hmax);
                 if (boton || temperaturaActual< Tmax-TEMP_OFF_THRESHOLD || humedadActual < Hmax- HUM_OFF_THRESHOLD || tiempoEncendido > TIEMPO_MAXIMO_ENCENDIDO){
                     estado=TOWAITING;
-                    rele = OFF;
+                    rele.input();
+                    led=OFF;
                 break;
             case TOWAITING:
                 wait_us(50);
