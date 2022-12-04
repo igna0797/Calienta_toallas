@@ -25,7 +25,7 @@
 
 //=====[Declarations (prototypes) of public functions]=========================
     void maquina_de_estados_init();
-    void maquina_de_estados_update();
+    void maquina_de_estados_update(char receivedChar);
 //=====[#include guards - end]=================================================
 
 #endif // _MAQUINA_H_

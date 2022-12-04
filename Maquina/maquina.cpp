@@ -5,6 +5,7 @@
 
 #include "DHT.h"
 #include "maquina.h"
+#include "pc_serial_com.h"
 
 //=====[Declaration of private defines]========================================
 
@@ -29,7 +30,7 @@ typedef enum {
 state_t estado;
 DHT sensor(PD_0, DHT11);
 DigitalInOut rele(PG_3);
-DigitalOut led(LED1);
+DigitalOut ledRele(LED1);
 DigitalIn boton(BUTTON1); 
 
 //=====[Declaration and initialization of private global variables]============
@@ -48,12 +49,21 @@ void maquina_de_estados_init(){
         rele.input();
     }
 
-void maquina_de_estados_update(){
+void maquina_de_estados_update(char receivedChar){
         static int Tmax=0;
         static int Hmax=0;
         static bool starting = 1; //medio feo hay como una rutina de starting que tiene 2 
         int temperaturaActual = 0;
         int humedadActual = 0; //leerlo aca y nunca mas?
+
+        switch (receivedChar){
+            case '1':
+                commandShowReleState(ledRele);
+                break;
+            case 'c':
+                commandShowCurrentTemperatureInCelsius(sensor);
+        }
+
         switch(estado){
             case APAGADO:
                 if (boton==1){
@@ -63,7 +73,7 @@ void maquina_de_estados_update(){
             case WAITING:
                 starting=1;
                 rele.input(); //por si acaso se llego aca sin que se apagara.
-                led=OFF;
+                ledRele=OFF;
                 sensor.readData();
                 if(sensor.ReadHumidity() > HUMIDITY_THRESHOLD || sensor.ReadTemperature(CELCIUS) > TEMPERATURE_THRESHOLD || boton==1 ){
                     estado=INICIANDO;
@@ -87,7 +97,7 @@ void maquina_de_estados_update(){
                 if (boton == 0) {
                     rele.output();
                     rele = LOW;
-                    led=ON;
+                    ledRele=ON;
                     estado=PRENDIDO;
                 }
                 break;
@@ -103,7 +113,8 @@ void maquina_de_estados_update(){
                 if (boton || temperaturaActual< Tmax-TEMP_OFF_THRESHOLD || humedadActual < Hmax- HUM_OFF_THRESHOLD || tiempoEncendido > TIEMPO_MAXIMO_ENCENDIDO){
                     estado=TOWAITING;
                     rele.input();
-                    led=OFF;
+                    //rele = HIGH;
+                    ledRele=OFF;
                 break;
             case TOWAITING:
                 wait_us(50);
