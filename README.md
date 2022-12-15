@@ -11,5 +11,7 @@ In this document it’s explained the design and assembly of a controller for a 
 Additional to the commodity, this work means a better use of energy as one alternative means that the heater stays on more time than necessary.
 It’s interesting as well that if it’s effective in this goal it would be possible to make similar projects for other appliances
 
+## 
+
 Si se quiere mas información referirse al siguiente documento:
 https://docs.google.com/document/d/1hi0PNdf0k1X66Pk41Nb5Q-n6P2b9eidHLK9e5kXhyFQ/edit?usp=sharing
